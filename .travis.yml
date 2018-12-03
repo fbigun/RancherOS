@@ -1,0 +1,23 @@
+dist: xenial
+if: tag IS present
+script:
+  - INTEGRATION_TESTS=0 make release
+before_deploy:
+  - mv dist/artifacts/initrd* dist/artifacts/initrd
+  - mv dist/artifacts/vmlinuz* dist/artifacts/vmlinuz
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  overwrite: true
+  file_glob: true
+  file:
+    - dist/artifacts/initrd
+    - dist/artifacts/vmlinuz
+    - dist/artifacts/rancheros.ipxe
+    - dist/artifacts/rancheros.iso
+    - dist/artifacts/iso-checksums.txt
+    - dist/artifacts/rootfs.tar.gz
+  skip_cleanup: true
+  on:
+    tags: true
+
